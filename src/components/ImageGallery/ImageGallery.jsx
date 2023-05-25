@@ -8,9 +8,7 @@ export const ImageGallery = ({imagesList,showModal}) => {
                 {imagesList.map(el => {
                     return <ImageGalleryItem key={el.id} altImg={el.tags} srcImg={el.webformatURL} onClick={showModal} largeImageURL={el.largeImageURL} />
                 })}
-            </ul>
-            
-    
+            </ul>  
 }
 
 ImageGallery.propTypes = {

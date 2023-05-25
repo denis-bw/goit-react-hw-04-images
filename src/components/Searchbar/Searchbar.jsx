@@ -1,20 +1,18 @@
 import css from './Searchbar.module.css'
-import React, { Component } from "react";
+// import React, { Component } from "react";
 import PropTypes from 'prop-types';
 
- export default class Searchbar extends Component {
+ export default function Searchbar ({onSubmit}) {
      
-     handleSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const { inputFind } = e.currentTarget;
-        this.props.onSubmit(inputFind.value);
+        onSubmit(inputFind.value);
         inputFind.value = '';
      }
      
-     
-     render() {
          return <header className={css.Searchbar}>
-             <form onSubmit={this.handleSubmit} className={css.SearchForm}>
+             <form onSubmit={handleSubmit} className={css.SearchForm}>
                  <button type="submit" className={css.SearchForm_button}>
                      <span className={css.SearchForm_button_label}>Search</span>
                  </button>
@@ -29,7 +27,7 @@ import PropTypes from 'prop-types';
                  />
              </form>
          </header>
-     }
+     
 }
 
 Searchbar.propTypes = {

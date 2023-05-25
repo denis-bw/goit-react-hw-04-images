@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from './Button/Button';
@@ -9,88 +9,79 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { api } from './api/api';
 
 
-export class App extends Component {
+export function App () {
 
-  state = {
-    images: [],
-    query: '',
-    page: 1,
-    loading: false,
-    showModal: false,
-    largeImage: '',
-    total: 0,
-    error: null,
-  }
+  const [images, setImages] = useState([]);
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [largeImage, setLargeImage] = useState(false);
+  const [total, setTotal] = useState(false);
+  
+  useEffect(() => {
+    if (query === '') {
+      return;
+    }
 
-  componentDidUpdate(prevProps,prevState) {
-    
-    if (prevState.query !== this.state.query || prevState.page !== this.state.page) {
-    this.setState({ loading: true })
-      api(this.state.query, this.state.page).then(data => {  
+    setLoading(true)
+    api(query, page).then(data => {  
         if (data.hits.length === 0) {
-        this.setState({total: 0})
+        setTotal(0)
         return toast.error("Nothing found", {
           position: toast.POSITION.TOP_CENTER
         })
       }
-         
-      return this.setState((lastProp) => {
-        if (prevState.query !== this.state.query) { return {images: [...data.hits],total: data.total} }
-        return {
-          images: [...lastProp.images, ...data.hits],
-          total: data.total
-        }
-      });
-    }).finally(() => {this.setState({loading: false})}); 
-    }
-   }
+        
+      if (page > 1) {
+        setImages(prevState => {
+          return [...prevState, ...data.hits]
+        })
+        setTotal(data.total)
+        return;
+      }
+
+      setImages([...data.hits])
+      setTotal(data.total)
+
+    }).finally(() => {setLoading(false)});
+
+  },[query,page])
 
   
-  findImage = (value) => {
+  const findImage = (value) => {
     if (value.trim() === "") {
       return toast.error("Enter a valid value", {
-                    position: toast.POSITION.TOP_CENTER
+        position: toast.POSITION.TOP_CENTER
     })}
 
-    this.setState({
-      page: 1,
-      query: value.trim().toLowerCase(),
-    })
+    setPage(1);
+    setQuery(value.trim().toLowerCase())
   }
 
 
-  incremenPage = () => {
-    this.setState(prevState => {
-      return { page: prevState.page + 1 };
-    })
+  const incremenPage = () => {
+    setPage(prevState => prevState +1)
   }
 
-  showModal = (largeImage) => {
-        this.setState(({showModal}) => {
-            return {
-                showModal: !showModal,
-                largeImage: largeImage
-            }
-        })
-    }
+  const openModal = (largeImage) => {
+        setShowModal(prevStateModal => !prevStateModal)
+        setLargeImage(largeImage)
+  }
 
-  render() {
-    const totalPage = this.state.total / this.state.images.length;
+  const totalPage = total / images.length;
+  
     return <div>
-            <Searchbar onSubmit={this.findImage} />
-        
+            <Searchbar onSubmit={findImage} />       
             <ImageGallery 
-              imagesList={this.state.images}
-              showModal={this.showModal}
+              imagesList={images}
+              showModal={openModal}
             />
-
-            {this.state.loading && <Loader/>}
-        
-            {totalPage > 1 && !this.state.loading && this.state.images.length !== 0 && <Button onClick={this.incremenPage} />}
-            {this.state.showModal && <Modal onClose={this.showModal} largeImage={this.state.largeImage } />}
+            {loading && <Loader/>}        
+            {totalPage > 1 && !loading && images.length !== 0 && <Button onClick={incremenPage} />}
+            {showModal && <Modal onClose={openModal} largeImage={largeImage} />}
             <ToastContainer autoClose={3000} />
-          </div>
-  };
+          </div> 
 };
 
 
