@@ -8,7 +8,6 @@ import { Modal } from "./Modal/Modal";
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { api } from './api/api';
 
-
 export function App () {
 
   const [images, setImages] = useState([]);
@@ -71,17 +70,17 @@ export function App () {
 
   const totalPage = total / images.length;
   
-    return <div>
-            <Searchbar onSubmit={findImage} />       
-            <ImageGallery 
-              imagesList={images}
-              showModal={openModal}
-            />
-            {loading && <Loader/>}        
-            {totalPage > 1 && !loading && images.length !== 0 && <Button onClick={incremenPage} />}
-            {showModal && <Modal onClose={openModal} largeImage={largeImage} />}
-            <ToastContainer autoClose={3000} />
-          </div> 
+  return <div>
+          <Searchbar onSubmit={findImage} />       
+          <ImageGallery 
+            imagesList={images}
+            showModal={openModal}
+          />
+          {loading && <Loader/>}        
+          {totalPage > 1 && !loading && images.length !== 0 && <Button onClick={incremenPage} />}
+          {showModal && <Modal onClose={openModal} largeImage={largeImage} />}
+          <ToastContainer autoClose={3000} />
+        </div> 
 };
 
 
