@@ -11,7 +11,7 @@ export function Modal ({onClose, largeImage}) {
     useEffect(() => {
         window.addEventListener('keydown', closeOnESC)
         return () =>  {window.removeEventListener('keydown', closeOnESC)}
-    },[])
+    })
 
     const closeOnESC = (e)  => {
             if (e.code === 'Escape') {
